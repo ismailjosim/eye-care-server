@@ -54,7 +54,23 @@ app.get('/services', async (req, res) => {
         })
     }
 })
-
+// homepage card
+app.get('/service', async (req, res) => {
+    try {
+        const query = {};
+        const cursor = ServiceCollection.find(query);
+        const service = await cursor.limit(3).toArray()
+        res.send({
+            success: true,
+            services: service
+        })
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message
+        })
+    }
+})
 
 // send single product
 app.get('/service/:id', async (req, res) => {
