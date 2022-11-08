@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors())
-app.use(express())
+app.use(express.json())
 
 
 const uri = `mongodb+srv://${ process.env.DB_USER }:${ process.env.DB_PASSWORD }@cluster0.s9x13go.mongodb.net/?retryWrites=true&w=majority`;
@@ -81,6 +81,24 @@ app.get('/service/:id', async (req, res) => {
         res.send({
             success: true,
             service: service
+        })
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message
+        })
+    }
+})
+
+
+// add service to database
+app.post('/services', async (req, res) => {
+    try {
+        const service = req.body;
+        const services = await ServiceCollection.insertOne(service);
+        res.send({
+            success: true,
+            services: services
         })
     } catch (error) {
         res.send({
