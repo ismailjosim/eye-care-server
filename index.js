@@ -31,7 +31,7 @@ dbConnect()
 
 // database collection
 const ServiceCollection = client.db('eyeCaredb').collection('services');
-
+const reviewCollection = client.db('eyeCaredb').collection('reviews');
 
 // check server
 app.get('/', (req, res) => {
@@ -92,7 +92,7 @@ app.get('/service/:id', async (req, res) => {
 })
 
 
-// add service to database
+// add new service to database
 app.post('/services', async (req, res) => {
     try {
         const service = req.body;
@@ -108,6 +108,43 @@ app.post('/services', async (req, res) => {
         })
     }
 })
+
+// add service review to database
+app.post('/reviews', async (req, res) => {
+    try {
+        const review = req.body;
+        const reviews = await reviewCollection.insertOne(review);
+        res.send({
+            success: true,
+            reviews: reviews
+        })
+
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message
+        })
+    }
+})
+
+app.get('/reviews', async (req, res) => {
+    try {
+        const query = {};
+        const cursor = reviewCollection.find(query)
+        const services = await cursor.toArray()
+        res.send({
+            success: true,
+            services: services
+        })
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message
+        })
+    }
+})
+
+
 
 
 app.listen(port, () => console.log(`Server Running On Port ${ port }`))
