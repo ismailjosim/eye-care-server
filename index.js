@@ -128,7 +128,6 @@ app.post('/reviews', async (req, res) => {
 })
 
 app.get('/reviews/:id', async (req, res) => {
-
     try {
         const id = req.params.id;
         const query = { service_id: id };
@@ -146,7 +145,39 @@ app.get('/reviews/:id', async (req, res) => {
     }
 })
 
+app.get('/reviews', async (req, res) => {
+    try {
+        let query = {};
+        if (req.query.userEmail) {
+            query = {
+                userEmail: req.query.userEmail
+            }
+        }
+        const cursor = reviewCollection.find(query);
+        const reviews = await cursor.toArray();
+        res.send({
+            success: true,
+            reviews: reviews
+        })
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message
+        })
+    }
 
+})
+// app.get('/reviews', async (req, res) => {
+
+//     let query = {};
+//     if (req.query.email) {
+//
+//     }
+//     const cursor = reviewCollection.find(query);
+//
+//     res.send(reviews);
+
+// });
 
 
 app.listen(port, () => console.log(`Server Running On Port ${ port }`))
