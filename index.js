@@ -187,4 +187,28 @@ app.delete('/review/:id', async (req, res) => {
 })
 
 
+// update Review
+app.patch('/reviews/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const status = req.body.status;
+        const query = { _id: ObjectId(id) };
+        const updatedDoc = { $set: { status: status } };
+        const review = await reviewCollection.updateOne(query, updatedDoc);
+        res.send({
+            success: true,
+            review: review
+        })
+
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message
+        })
+    }
+
+
+})
+
+
 app.listen(port, () => console.log(`Server Running On Port ${ port }`))
