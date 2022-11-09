@@ -127,14 +127,16 @@ app.post('/reviews', async (req, res) => {
     }
 })
 
-app.get('/reviews', async (req, res) => {
+app.get('/reviews/:id', async (req, res) => {
+
     try {
-        const query = {};
-        const cursor = reviewCollection.find(query)
-        const services = await cursor.toArray()
+        const id = req.params.id;
+        const query = { service_id: id };
+        const cursor = reviewCollection.find(query);
+        const reviews = await cursor.sort({ timer: -1 }).toArray()
         res.send({
             success: true,
-            services: services
+            reviews: reviews
         })
     } catch (error) {
         res.send({
