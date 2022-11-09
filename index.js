@@ -191,23 +191,18 @@ app.delete('/review/:id', async (req, res) => {
 app.patch('/reviews/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const status = req.body.status;
-        const query = { _id: ObjectId(id) };
-        const updatedDoc = { $set: { status: status } };
-        const review = await reviewCollection.updateOne(query, updatedDoc);
+        const feedback = req.body.feedback;
+        const reviews = await reviewCollection.updateOne({ _id: ObjectId(id) }, { $set: { feedback: feedback } });
         res.send({
             success: true,
-            review: review
+            reviews: reviews
         })
-
     } catch (error) {
         res.send({
             success: false,
             error: error.message
         })
     }
-
-
 })
 
 
