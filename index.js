@@ -167,17 +167,24 @@ app.get('/reviews', async (req, res) => {
     }
 
 })
-// app.get('/reviews', async (req, res) => {
 
-//     let query = {};
-//     if (req.query.email) {
-//
-//     }
-//     const cursor = reviewCollection.find(query);
-//
-//     res.send(reviews);
-
-// });
+// Delete Reviews
+app.delete('/review/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) }
+        const review = await reviewCollection.deleteOne(query);
+        res.send({
+            success: true,
+            review: review
+        })
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message
+        })
+    }
+})
 
 
 app.listen(port, () => console.log(`Server Running On Port ${ port }`))
