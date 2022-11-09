@@ -1,7 +1,7 @@
 require('dotenv').config()
+require('colors');
 const express = require('express');
 const cors = require('cors');
-const colors = require('colors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
@@ -30,7 +30,8 @@ const dbConnect = async () => {
 dbConnect()
 
 // database collection
-const ServiceCollection = client.db('eyeCaredb').collection('services')
+const ServiceCollection = client.db('eyeCaredb').collection('services');
+
 
 // check server
 app.get('/', (req, res) => {
