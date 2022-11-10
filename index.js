@@ -29,6 +29,26 @@ const dbConnect = async () => {
 }
 dbConnect()
 
+// verify jwt function
+const verifyJWT = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: "Unauthorized Access" })
+    }
+
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (error, decoded) {
+        if (error) {
+            return res.status(403).send({ message: "Forbidden Access" })
+        }
+        req.decoded = decoded;
+        next();
+    })
+
+}
+
+
+
 // database collection
 const ServiceCollection = client.db('eyeCaredb').collection('services');
 const reviewCollection = client.db('eyeCaredb').collection('reviews');
@@ -37,6 +57,27 @@ const reviewCollection = client.db('eyeCaredb').collection('reviews');
 app.get('/', (req, res) => {
     res.send('Eye Care Server Is Connected')
 })
+
+
+// JWt auth
+app.post('/jwt', (req, res) => {
+
+    try {
+        const user = req.body;
+        const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+        res.send({
+            success: true,
+            token: token
+        })
+    } catch (error) {
+        res.send({
+            success: false,
+            error: error.message
+        })
+    }
+})
+
+
 
 // get all services
 app.get('/services', async (req, res) => {
@@ -128,8 +169,10 @@ app.post('/reviews', async (req, res) => {
 })
 
 app.get('/reviews/:id', async (req, res) => {
+
+
     try {
-        const id = req.params.id;
+
         const query = { service_id: id };
         const cursor = reviewCollection.find(query);
         const reviews = await cursor.sort({ timer: -1 }).toArray()
@@ -204,6 +247,8 @@ app.patch('/reviews/:id', async (req, res) => {
         })
     }
 })
+
+
 
 
 app.listen(port, () => console.log(`Server Running On Port ${ port }`))
